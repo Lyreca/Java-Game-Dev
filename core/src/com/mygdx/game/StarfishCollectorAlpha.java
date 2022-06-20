@@ -1,7 +1,6 @@
 package com.mygdx.game;
 
 // imports
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
@@ -31,27 +30,64 @@ public class StarfishCollectorAlpha extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		// turtle init
-		turtleTexture = new Texture(Gdx.files.internal("assets/turtle-1.png"))
+		turtleTexture = new Texture(Gdx.files.internal("assets/turtle-1.png"));
 		turtleX = 20;
 		turtleY = 20;
 		turtleRectangle = new Rectangle(turtleX,turtleY,turtleTexture.getWidth(),turtleTexture.getHeight());
 		
 		// starfish init
-		starfishTexture = new Texture(Gdx.files.internal("assets.getHeight()"));
+		starfishTexture = new Texture(Gdx.files.internal("assets/starfish.png"));
 		starfishX = 380;
 		starfishY = 380;
 		starfishRectangle = new Rectangle(starfishX, starfishY, starfishTexture.getWidth(), starfishTexture.getHeight());
 
 		// background init
 		oceanTexture = new Texture(Gdx.files.internal("assets/water.jpg"));
-		winMessageTexture = new Texture(Gdx.files.internal("assets/you-win.jpg"));
+		winMessageTexture = new Texture(Gdx.files.internal("assets/you-win.png"));
 
 		win = false;
 	}
 
 	@Override
 	public void render () {
+		// check user input
+		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+			turtleX--;
+		}
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+			turtleX++;
+		}
+		if (Gdx.input.isKeyPressed(Keys.UP)) {
+			turtleY++;
+		}
+		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+			turtleY--;
+		}
 
+		// update turtle rectangle location
+		turtleRectangle.setPosition(turtleX, turtleY);
+
+		// check win condition: turtle must be overlapping starfish
+		if (turtleRectangle.overlaps(starfishRectangle)) {
+			win = true;
+		}
+
+		// clear screen
+		Gdx.gl.glClearColor(0,0,0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		// draw graphics
+		batch.begin();
+		batch.draw(oceanTexture, 0, 0);
+		if(!win) {
+			batch.draw(starfishTexture, starfishX, starfishY);
+		}
+		batch.draw(turtleTexture, turtleX, turtleY);
+		if(win) {
+			batch.draw(winMessageTexture, 180, 180);
+		}
+
+		batch.end();
 	}
 	
 	@Override
